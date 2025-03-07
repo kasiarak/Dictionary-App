@@ -3,13 +3,17 @@ package db
 import (
 	"log"
 	"os"
+	"sync"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+var (
+	DB    *gorm.DB
+	Mutex sync.Mutex
+)
 
 func InitDB() {
 	err := godotenv.Load()
