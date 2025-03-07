@@ -29,4 +29,5 @@ func InitDB() {
 		log.Fatal("Failed to connect to the database: ", err)
 	}
 
+	DB.AutoMigrate(&Word{}, &Translation{}, &Sentence{})
 }
