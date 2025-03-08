@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net"
 	"net/http"
 	"os"
 
@@ -31,5 +32,12 @@ func main() {
 	}
 
 	log.Println("GraphQL server running on http://localhost:" + port + "/dictionary")
-	http.ListenAndServe(":"+port, nil)
+	err = http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		if opErr, ok := err.(*net.OpError); ok && opErr.Op == "listen" {
+			log.Fatalf("Port %s is already in use", port)
+		} else {
+			log.Fatalf("Error starting server: %v", err)
+		}
+	}
 }

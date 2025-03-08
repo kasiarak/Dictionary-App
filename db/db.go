@@ -33,5 +33,8 @@ func InitDB() {
 		log.Fatal("Failed to connect to the database: ", err)
 	}
 
-	DB.AutoMigrate(&Word{}, &Translation{}, &Sentence{})
+	err = DB.AutoMigrate(&Word{}, &Translation{}, &Sentence{})
+	if err != nil {
+		log.Fatal("Failed to migrate the database: ", err)
+	}
 }

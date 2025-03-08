@@ -17,7 +17,10 @@ var QueryType = graphql.NewObject(
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					word := p.Args["word"].(string)
 					var translations []db.Translation
-					db.DB.Preload("Sentences").Joins("JOIN words ON words.id = translations.word_id").Where("words.word = ?", word).Find(&translations)
+					result := db.DB.Preload("Sentences").Joins("JOIN words ON words.id = translations.word_id").Where("words.word = ?", word).Find(&translations)
+					if result.Error != nil {
+						return nil, result.Error
+					}
 					return translations, nil
 				},
 			},

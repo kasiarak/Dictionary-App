@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"dictionary-app/db"
+
 	"github.com/graphql-go/graphql"
 )
 
@@ -25,13 +26,19 @@ var MutationType = graphql.NewObject(
 					sentenceText := p.Args["sentence"].(string)
 
 					var word db.Word
-					db.DB.FirstOrCreate(&word, db.Word{Word: wordText})
+					if err := db.DB.FirstOrCreate(&word, db.Word{Word: wordText}).Error; err != nil {
+						return nil, err
+					}
 
 					translation := db.Translation{WordID: word.ID, Translation: translationText}
-					db.DB.Create(&translation)
+					if err := db.DB.Create(&translation).Error; err != nil {
+						return nil, err
+					}
 
 					sentence := db.Sentence{TranslationID: translation.ID, Sentence: sentenceText}
-					db.DB.Create(&sentence)
+					if err := db.DB.Create(&sentence).Error; err != nil {
+						return nil, err
+					}
 
 					translation.Sentences = []db.Sentence{sentence}
 					return translation, nil
