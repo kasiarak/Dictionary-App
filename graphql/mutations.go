@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"dictionary-app/db"
+	"fmt"
 
 	"github.com/graphql-go/graphql"
 )
@@ -24,6 +25,16 @@ var MutationType = graphql.NewObject(
 					wordText := p.Args["word"].(string)
 					translationText := p.Args["translation"].(string)
 					sentenceText := p.Args["sentence"].(string)
+
+					if len(wordText) > 50 {
+						return nil, fmt.Errorf("word is too long, maximum length is 50 characters")
+					}
+					if len(translationText) > 50 {
+						return nil, fmt.Errorf("translation is too long, maximum length is 50 characters")
+					}
+					if len(sentenceText) > 100 {
+						return nil, fmt.Errorf("sentence is too long, maximum length is 100 characters")
+					}
 
 					var word db.Word
 					if err := db.DB.FirstOrCreate(&word, db.Word{Word: wordText}).Error; err != nil {
